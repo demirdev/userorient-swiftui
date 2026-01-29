@@ -44,12 +44,12 @@ final class BoardViewModel: ObservableObject {
         do {
             try await UserOrientClient.shared.ensureInitialized()
             features = UserOrientClient.shared.features
-            #if DEBUG
+            // #if DEBUG
             print("[UserOrient] features loaded: \(features.count) items")
             for (index, f) in features.enumerated() {
                 print("[UserOrient]   [\(index)] id: \(f.id), status: \(f.status), title: \(f.title(for: languageCode)), isCompleted: \(f.isCompleted)")
             }
-            #endif
+            // #endif
         } catch {
             errorMessage = error.localizedDescription
         }
