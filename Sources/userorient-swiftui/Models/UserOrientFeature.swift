@@ -37,10 +37,10 @@ public struct UserOrientFeature: Identifiable, Decodable, Equatable {
         labels.contains(where: { $0.isCompleted })
     }
 
-    /// Placeholder feature for loading states.
-    public static var skeleton: UserOrientFeature {
+    /// Placeholder feature for loading states. Use `skeleton(placeholderIndex:)` for lists so each item has a unique id.
+    public static func skeleton(placeholderIndex: Int) -> UserOrientFeature {
         UserOrientFeature(
-            id: "skeleton",
+            id: "skeleton-\(placeholderIndex)",
             status: "skeleton",
             projectId: "skeleton",
             ownerType: "skeleton",

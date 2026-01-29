@@ -161,7 +161,7 @@ public struct UserOrientBoardView: View {
                             FeatureCardView(
                                 feature: feature,
                                 languageCode: viewModel.languageCode,
-                                isSkeleton: viewModel.isLoading && feature.id == "skeleton",
+                                isSkeleton: viewModel.isLoading && feature.id.hasPrefix("skeleton"),
                                 onToggleUpvote: {
                                     Task {
                                         await viewModel.toggleUpvote(for: feature)

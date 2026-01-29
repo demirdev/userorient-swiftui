@@ -16,7 +16,7 @@ final class BoardViewModel: ObservableObject {
         let source: [UserOrientFeature]
 
         if isLoading && features.isEmpty {
-            source = Array(repeating: .skeleton, count: 9)
+            source = (0..<9).map { UserOrientFeature.skeleton(placeholderIndex: $0) }
         } else {
             source = features
         }
@@ -44,6 +44,12 @@ final class BoardViewModel: ObservableObject {
         do {
             try await UserOrientClient.shared.ensureInitialized()
             features = UserOrientClient.shared.features
+            #if DEBUG
+            print("[UserOrient] features loaded: \(features.count) items")
+            for (index, f) in features.enumerated() {
+                print("[UserOrient]   [\(index)] id: \(f.id), status: \(f.status), title: \(f.title(for: languageCode)), isCompleted: \(f.isCompleted)")
+            }
+            #endif
         } catch {
             errorMessage = error.localizedDescription
         }
