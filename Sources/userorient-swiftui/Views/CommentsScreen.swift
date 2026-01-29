@@ -21,6 +21,7 @@ struct CommentsScreen: View {
                 content
                 commentInput
             }
+            .frame(minHeight: 360)
             .navigationTitle(UserOrientStrings.comments(languageCode: nil))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -98,12 +99,10 @@ struct CommentsScreen: View {
                 .disabled(viewModel.newCommentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isAddingComment)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
+            .padding(.bottom, 20)
         }
-        .background(
-            platformSecondaryBackgroundColor()
-                .ignoresSafeArea(edges: .bottom)
-        )
+        .background(platformSecondaryBackgroundColor())
     }
 }
 

@@ -16,28 +16,47 @@ struct FeatureFormScreen: View {
         #if os(iOS)
         .topBarTrailing
         #else
-        .cancellationAction
+        .primaryAction
         #endif
     }
 
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
+                #if os(macOS)
+                HStack {
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .frame(width: 24, height: 24)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                }
+                #endif
                 if !viewModel.isSent {
                     formBody
-                        .frame(maxHeight: .infinity)
+                        .frame(minHeight: 200, maxHeight: .infinity)
                 }
                 footer
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(minHeight: 440)
             .navigationTitle(UserOrientStrings.addFeature(languageCode: nil))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             #if os(macOS)
-            .frame(minWidth: 520, minHeight: 420)
+            .frame(minWidth: 520, minHeight: 440)
             #endif
             .toolbar {
+                #if os(iOS)
                 ToolbarItem(placement: toolbarClosePlacement) {
                     Button {
                         dismiss()
@@ -45,6 +64,7 @@ struct FeatureFormScreen: View {
                         Image(systemName: "xmark")
                     }
                 }
+                #endif
             }
         }
         .alert(
@@ -69,16 +89,13 @@ struct FeatureFormScreen: View {
     }
 
     private var formBody: some View {
-        VStack {
+        VStack(spacing: 8) {
             TextEditor(text: $viewModel.text)
-                .padding(8)
+                .modifier(HideScrollContentBackgroundModifier())
+                .padding(10)
                 .frame(maxWidth: .infinity, minHeight: 160, maxHeight: .infinity)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.secondary.opacity(0.3))
-                )
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
+                .background(Color.primary.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .onChange(of: viewModel.text) { newValue in
                     if newValue.count > 500 {
                         viewModel.text = String(newValue.prefix(500))
@@ -90,10 +107,11 @@ struct FeatureFormScreen: View {
                 Text("\(viewModel.characterCount)/500")
                     .font(.caption)
                     .foregroundColor(counterColor)
-                    .padding(.trailing, 24)
-                    .padding(.top, 4)
+                    .padding(.trailing, 20)
             }
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 
     private var counterColor: Color {
@@ -177,6 +195,16 @@ struct SentView: View {
                 }
             }
             .frame(maxWidth: .infinity)
+        }
+    }
+}
+
+private struct HideScrollContentBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, macOS 13.0, *) {
+            content.scrollContentBackground(.hidden)
+        } else {
+            content
         }
     }
 }
