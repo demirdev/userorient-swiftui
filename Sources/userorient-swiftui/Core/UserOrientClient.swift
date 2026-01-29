@@ -62,7 +62,7 @@ final class UserOrientClient: ObservableObject {
     // MARK: - Initialization
 
     func ensureInitialized() async throws {
-        guard var config = configuration, !config.apiKey.isEmpty else {
+        guard let config = configuration, !config.apiKey.isEmpty else {
             throw UserOrientError.notConfigured
         }
 

@@ -35,6 +35,9 @@ public struct UserOrientBoardView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
         }
+        #if os(iOS)
+        .navigationViewStyle(.stack)
+        #endif
         .task {
             await viewModel.load()
         }

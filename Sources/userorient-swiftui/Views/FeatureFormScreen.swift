@@ -22,13 +22,9 @@ struct FeatureFormScreen: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(UserOrientStrings.goBack(languageCode: nil)) {
-                        dismiss()
-                    }
-                }
-            }
+            #if os(macOS)
+            .frame(minWidth: 520, minHeight: 420)
+            #endif
         }
         .alert(
             UserOrientStrings.errorTitle(languageCode: nil),
@@ -79,6 +75,16 @@ struct FeatureFormScreen: View {
         }
     }
 
+    private var counterColor: Color {
+        if viewModel.characterCount == 0 {
+            return .secondary.opacity(0.5)
+        }
+        if viewModel.characterCount < 10 {
+            return .red
+        }
+        return .secondary
+    }
+
     private var footer: some View {
         VStack(spacing: 16) {
             if viewModel.isSent {
@@ -112,16 +118,6 @@ struct FeatureFormScreen: View {
             platformFormBackgroundColor()
                 .ignoresSafeArea(edges: .bottom)
         )
-    }
-
-    private var counterColor: Color {
-        if viewModel.characterCount == 0 {
-            return .secondary.opacity(0.5)
-        }
-        if viewModel.characterCount < 10 {
-            return .red
-        }
-        return .secondary
     }
 }
 
