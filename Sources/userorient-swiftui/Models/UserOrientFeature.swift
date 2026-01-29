@@ -121,8 +121,11 @@ public struct UserOrientFeature: Identifiable, Decodable, Equatable {
         }
 
         voted = try container.decode(Bool.self, forKey: .voted)
-        title = try container.decodeIfPresent([String: String].self, forKey: .title) ?? [:]
-        description = try container.decodeIfPresent([String: String].self, forKey: .description) ?? [:]
+        // API may send title/description as objects with null values (e.g. "en":"x","az":null); strip nulls.
+        let titleRaw = try container.decodeIfPresent([String: String?].self, forKey: .title)
+        title = titleRaw?.compactMapValues { $0 } ?? [:]
+        let descriptionRaw = try container.decodeIfPresent([String: String?].self, forKey: .description)
+        description = descriptionRaw?.compactMapValues { $0 } ?? [:]
         labels = try container.decodeIfPresent([UserOrientLabel].self, forKey: .labels) ?? []
         commentsCount = try container.decodeIfPresent(Int.self, forKey: .commentsCount)
     }

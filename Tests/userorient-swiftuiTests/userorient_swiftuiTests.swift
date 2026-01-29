@@ -67,3 +67,48 @@ func decodingUserOrientResponseWithMissingDataThrowsDecodingError() async throws
     #expect(description.contains("missing"))
 }
 
+@Test
+func decodingFeaturesResponseWithNullTitleAndDescriptionValuesSucceeds() async throws {
+    // API returns title/description as objects with null locale values; decoding must strip nulls.
+    let json = """
+    {
+      "features": [
+        {
+          "id": "2ea45c8c-acb6-4a08-a7d9-b4bdcf65855d",
+          "status": "APPROVED",
+          "projectId": "5cbc468e-358b-445e-bf23-291f1cad55f0",
+          "ownerId": "8ccde89b-e887-40f9-95d0-7380a596a034",
+          "ownerType": "sdk_user",
+          "ownerEmail": null,
+          "ownerFirstName": null,
+          "ownerLastName": "",
+          "voteCount": 1,
+          "createdAt": "2026-01-29T05:05:47.570Z",
+          "voted": true,
+          "commentsCount": 0,
+          "title": { "en": "test fdasf ads", "az": null, "ru": null },
+          "description": { "en": "test fdasf ads", "az": null, "ru": null },
+          "labels": []
+        }
+      ],
+      "meta": { "perPage": 75, "currentPage": 1, "pageCount": 1, "totalCount": 1 }
+    }
+    """
+    let data = json.data(using: .utf8)!
+    let decoded = try JSONDecoder().decode(FeaturesResponseDecodable.self, from: data)
+
+    #expect(decoded.features.count == 1)
+    let feature = decoded.features[0]
+    #expect(feature.id == "2ea45c8c-acb6-4a08-a7d9-b4bdcf65855d")
+    #expect(feature.status == "APPROVED")
+    #expect(feature.voted == true)
+    #expect(feature.voteCount == 1)
+    #expect(feature.labels.isEmpty)
+
+    // Null locale keys must be stripped; only non-null values remain.
+    #expect(feature.title == ["en": "test fdasf ads"])
+    #expect(feature.description == ["en": "test fdasf ads"])
+    #expect(feature.title(for: "en") == "test fdasf ads")
+    #expect(feature.title(for: "az") == "test fdasf ads")
+}
+
