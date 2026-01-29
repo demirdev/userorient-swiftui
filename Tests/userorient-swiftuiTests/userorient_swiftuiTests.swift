@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import userorient_swiftui
 
@@ -41,5 +42,28 @@ func featureCompletionDetectionUsesCompletedLabelId() async throws {
     )
 
     #expect(feature.isCompleted == true)
+}
+
+/// Mirrors the API response shape used in UserOrientAPI to trigger the same decoding path.
+private struct FeaturesResponseDecodable: Decodable {
+    let features: [UserOrientFeature]
+}
+
+@Test
+func decodingUserOrientResponseWithMissingDataThrowsDecodingError() async throws {
+    // Empty JSON triggers "keyNotFound" for "features" -> DecodingError with "data is missing"
+    let emptyJSON = "{}".data(using: .utf8)!
+    var decodingError: Error?
+    do {
+        _ = try JSONDecoder().decode(FeaturesResponseDecodable.self, from: emptyJSON)
+    } catch {
+        decodingError = error
+    }
+    #expect(decodingError != nil)
+
+    let wrapped = UserOrientError.decodingError(underlying: decodingError!)
+    let description = wrapped.errorDescription ?? ""
+    #expect(description.contains("Failed to decode UserOrient response"))
+    #expect(description.contains("missing"))
 }
 

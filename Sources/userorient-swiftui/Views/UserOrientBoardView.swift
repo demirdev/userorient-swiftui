@@ -18,47 +18,45 @@ public struct UserOrientBoardView: View {
     public init() {}
 
     public var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                tabs
-
-                if viewModel.selectedTab == .roadmap {
-                    TipView()
+        Group {
+            #if os(macOS)
+            // On macOS, avoid NavigationView to prevent empty detail column on the right.
+            // Use a plain stack and overlay the close button at top-right.
+            mainContent
+                .overlay(alignment: .topTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .frame(width: 24, height: 24)
+                            .background(Color.primary.opacity(0.08))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
                 }
-
-                content
-
-                WatermarkView {
-                    showingForm = true
-                }
-            }
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
+            #else
+            NavigationView {
+                mainContent
                 #if os(iOS)
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                }
-                #elseif os(macOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                }
+                .navigationBarTitleDisplayMode(.inline)
                 #endif
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                    }
+                }
             }
+            .navigationViewStyle(.stack)
+            #endif
         }
-        #if os(iOS)
-        .navigationViewStyle(.stack)
-        #endif
-        .task {
+        .task { @MainActor in
             await viewModel.load()
         }
         .sheet(item: $selectedFeatureForComments) { feature in
@@ -66,6 +64,22 @@ public struct UserOrientBoardView: View {
         }
         .sheet(isPresented: $showingForm) {
             FeatureFormScreen()
+        }
+    }
+
+    private var mainContent: some View {
+        VStack(spacing: 0) {
+            tabs
+
+            if viewModel.selectedTab == .roadmap {
+                TipView()
+            }
+
+            content
+
+            WatermarkView {
+                showingForm = true
+            }
         }
     }
 

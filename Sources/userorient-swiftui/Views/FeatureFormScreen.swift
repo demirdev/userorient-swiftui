@@ -25,9 +25,11 @@ struct FeatureFormScreen: View {
             VStack(spacing: 0) {
                 if !viewModel.isSent {
                     formBody
+                        .frame(maxHeight: .infinity)
                 }
                 footer
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle(UserOrientStrings.addFeature(languageCode: nil))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -70,7 +72,7 @@ struct FeatureFormScreen: View {
         VStack {
             TextEditor(text: $viewModel.text)
                 .padding(8)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, minHeight: 160, maxHeight: .infinity)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.secondary.opacity(0.3))
