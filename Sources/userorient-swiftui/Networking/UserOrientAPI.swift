@@ -17,6 +17,18 @@ struct UserOrientAPI {
         request.httpMethod = "GET"
 
         let (data, response) = try await URLSession.shared.data(for: request)
+
+        #if DEBUG
+        if let raw = String(data: data, encoding: .utf8) {
+            print("[UserOrient] fetchFeatures raw response: \(raw)")
+        } else {
+            print("[UserOrient] fetchFeatures raw data (invalid UTF-8), length: \(data.count)")
+        }
+        if let http = response as? HTTPURLResponse {
+            print("[UserOrient] fetchFeatures HTTP status: \(http.statusCode)")
+        }
+        #endif
+
         try validate(response: response, data: data)
 
         do {
@@ -44,6 +56,18 @@ struct UserOrientAPI {
         request.httpBody = try encoder.encode(payload)
 
         let (data, response) = try await URLSession.shared.data(for: request)
+
+        #if DEBUG
+        if let raw = String(data: data, encoding: .utf8) {
+            print("[UserOrient] syncUser raw response: \(raw)")
+        } else {
+            print("[UserOrient] syncUser raw data (invalid UTF-8), length: \(data.count)")
+        }
+        if let http = response as? HTTPURLResponse {
+            print("[UserOrient] syncUser HTTP status: \(http.statusCode)")
+        }
+        #endif
+
         try validate(response: response, data: data)
 
         do {
