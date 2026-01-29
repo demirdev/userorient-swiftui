@@ -12,10 +12,20 @@ struct FeatureFormScreen: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = FormViewModel()
 
+    private var toolbarClosePlacement: ToolbarItemPlacement {
+        #if os(iOS)
+        .topBarTrailing
+        #else
+        .cancellationAction
+        #endif
+    }
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                formBody
+                if !viewModel.isSent {
+                    formBody
+                }
                 footer
             }
             .navigationTitle(UserOrientStrings.addFeature(languageCode: nil))
@@ -25,6 +35,15 @@ struct FeatureFormScreen: View {
             #if os(macOS)
             .frame(minWidth: 520, minHeight: 420)
             #endif
+            .toolbar {
+                ToolbarItem(placement: toolbarClosePlacement) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
         }
         .alert(
             UserOrientStrings.errorTitle(languageCode: nil),
@@ -125,33 +144,38 @@ struct SentView: View {
     let onClose: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 40))
-                .foregroundColor(.green)
+        ScrollView {
+            VStack(spacing: 16) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 40))
+                    .foregroundColor(.green)
 
-            Text(UserOrientStrings.sentTitle(languageCode: nil))
-                .font(.headline)
-
-            Text(UserOrientStrings.sentDescription(languageCode: nil))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-
-            Button(action: onClose) {
-                Text(UserOrientStrings.goBack(languageCode: nil))
+                Text(UserOrientStrings.sentTitle(languageCode: nil))
                     .font(.headline)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.accentColor)
-                    )
-                    .foregroundColor(.white)
+
+                Text(UserOrientStrings.sentDescription(languageCode: nil))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 32)
+
+                Button(action: onClose) {
+                    Text(UserOrientStrings.goBack(languageCode: nil))
+                        .font(.headline)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.accentColor)
+                        )
+                        .foregroundColor(.white)
+                }
             }
+            .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
     }
 }
 

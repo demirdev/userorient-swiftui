@@ -10,6 +10,7 @@ import AppKit
 
 /// Main entry SwiftUI view that presents the UserOrient feature board.
 public struct UserOrientBoardView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = BoardViewModel()
     @State private var showingForm = false
     @State private var selectedFeatureForComments: UserOrientFeature?
@@ -34,6 +35,25 @@ public struct UserOrientBoardView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                #if os(iOS)
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                #elseif os(macOS)
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                #endif
+            }
         }
         #if os(iOS)
         .navigationViewStyle(.stack)
