@@ -63,8 +63,24 @@ public struct UserOrientBoardView: View {
             CommentsScreen(feature: feature)
         }
         .sheet(isPresented: $showingForm) {
-            FeatureFormScreen()
+            featureFormSheetContent
         }
+    }
+
+    @ViewBuilder
+    private var featureFormSheetContent: some View {
+        let form = FeatureFormScreen()
+        #if os(iOS)
+        if #available(iOS 16.0, *) {
+            form
+                .presentationDetents([.height(FeatureFormScreen.defaultSheetHeight), .large])
+                .presentationDragIndicator(.visible)
+        } else {
+            form
+        }
+        #else
+        form
+        #endif
     }
 
     private var mainContent: some View {
@@ -358,6 +374,7 @@ struct WatermarkView: View {
 
     var body: some View {
         VStack(spacing: 16) {
+            Divider()
             Button(action: onAddFeature) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -388,13 +405,6 @@ struct WatermarkView: View {
         }
         .padding(.top, 16)
         .padding(.horizontal, 16)
-        .background(
-            VStack(spacing: 0) {
-                Divider()
-                platformBackgroundColor()
-                    .ignoresSafeArea(edges: .bottom)
-            }
-        )
     }
 
     private func openUserOrient() {
@@ -406,16 +416,5 @@ struct WatermarkView: View {
         #endif
     }
 }
-
-private func platformBackgroundColor() -> Color {
-    #if canImport(UIKit)
-    return Color(UIColor.systemBackground)
-    #elseif canImport(AppKit)
-    return Color(nsColor: .windowBackgroundColor)
-    #else
-    return Color.white
-    #endif
-}
-
 
 

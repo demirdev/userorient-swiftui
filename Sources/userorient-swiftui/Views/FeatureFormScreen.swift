@@ -9,6 +9,10 @@ import AppKit
 #endif
 
 struct FeatureFormScreen: View {
+    /// Default size for the suggest-feature sheet so the form is visible.
+    static let defaultSheetWidth: CGFloat = 520
+    static let defaultSheetHeight: CGFloat = 560
+
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = FormViewModel()
 
@@ -47,13 +51,13 @@ struct FeatureFormScreen: View {
                 footer
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .frame(minHeight: 440)
+            .frame(minHeight: Self.defaultSheetHeight)
             .navigationTitle(UserOrientStrings.addFeature(languageCode: nil))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             #if os(macOS)
-            .frame(minWidth: 520, minHeight: 440)
+            .frame(minWidth: Self.defaultSheetWidth, idealWidth: Self.defaultSheetWidth, minHeight: Self.defaultSheetHeight, idealHeight: Self.defaultSheetHeight)
             #endif
             .toolbar {
                 #if os(iOS)
