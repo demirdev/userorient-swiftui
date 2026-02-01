@@ -94,12 +94,12 @@ public struct UserOrientBoardView: View {
             tabs
 
             if viewModel.selectedTab == .roadmap {
-                TipView()
+                TipView(languageCode: viewModel.languageCode)
             }
 
             content
 
-            WatermarkView {
+            WatermarkView(languageCode: viewModel.languageCode) {
                 showingForm = true
             }
         }
@@ -339,6 +339,8 @@ struct FeatureCardView: View {
 }
 
 struct TipView: View {
+    let languageCode: String
+
     @State private var showTip = false
 
     private let storageKey = "userorient_swiftui_tip_shown"
@@ -350,7 +352,7 @@ struct TipView: View {
                     Image(systemName: "lightbulb.fill")
                         .foregroundColor(Color.blue)
 
-                    Text(UserOrientStrings.tip(languageCode: nil))
+                    Text(UserOrientStrings.tip(languageCode: languageCode))
                         .font(.subheadline)
                         .foregroundColor(Color.blue)
                 }
@@ -376,6 +378,7 @@ struct TipView: View {
 }
 
 struct WatermarkView: View {
+    let languageCode: String
     var onAddFeature: () -> Void
 
     var body: some View {
@@ -384,7 +387,7 @@ struct WatermarkView: View {
             Button(action: onAddFeature) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text(UserOrientStrings.addFeature(languageCode: nil))
+                    Text(UserOrientStrings.addFeature(languageCode: languageCode))
                 }
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)

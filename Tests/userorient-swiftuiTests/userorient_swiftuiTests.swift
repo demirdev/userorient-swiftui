@@ -11,6 +11,14 @@ func localizationMatchesFlutterContent() async throws {
 }
 
 @Test
+func localizationSupportsAddedLanguages() async throws {
+    #expect(UserOrientStrings.title(languageCode: "de") == "Funktionen")
+    #expect(UserOrientStrings.title(languageCode: "ja") == "機能")
+    #expect(UserOrientStrings.title(languageCode: "pt-BR") == "Recursos")
+    #expect(UserOrientStrings.title(languageCode: "zh-Hans") == "功能")
+}
+
+@Test
 func defaultThemeProvidesLightAndDarkColors() async throws {
     let theme = UserOrientTheme.default
     #expect(theme.light != nil)

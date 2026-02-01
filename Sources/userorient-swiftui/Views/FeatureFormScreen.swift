@@ -16,6 +16,8 @@ struct FeatureFormScreen: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = FormViewModel()
 
+    private var languageCode: String? { UserOrientClient.shared.configurationLanguageCode }
+
     private var toolbarClosePlacement: ToolbarItemPlacement {
         #if os(iOS)
         .topBarTrailing
@@ -72,7 +74,7 @@ struct FeatureFormScreen: View {
             }
         }
         .alert(
-            UserOrientStrings.errorTitle(languageCode: nil),
+            UserOrientStrings.errorTitle(languageCode: languageCode),
             isPresented: Binding(
                 get: { viewModel.errorMessage != nil },
                 set: { newValue in
@@ -131,7 +133,7 @@ struct FeatureFormScreen: View {
     private var footer: some View {
         VStack(spacing: 16) {
             if viewModel.isSent {
-                SentView {
+                SentView(languageCode: languageCode) {
                     dismiss()
                 }
             } else {
@@ -145,7 +147,7 @@ struct FeatureFormScreen: View {
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
                     } else {
-                        Text(UserOrientStrings.submitForm(languageCode: nil))
+                        Text(UserOrientStrings.submitForm(languageCode: languageCode))
                             .font(.system(size: 16, weight: .semibold))
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
@@ -169,6 +171,7 @@ struct FeatureFormScreen: View {
 }
 
 struct SentView: View {
+    let languageCode: String?
     let onClose: () -> Void
 
     var body: some View {
@@ -178,10 +181,10 @@ struct SentView: View {
                     .font(.system(size: 40))
                     .foregroundColor(.green)
 
-                Text(UserOrientStrings.sentTitle(languageCode: nil))
+                Text(UserOrientStrings.sentTitle(languageCode: languageCode))
                     .font(.headline)
 
-                Text(UserOrientStrings.sentDescription(languageCode: nil))
+                Text(UserOrientStrings.sentDescription(languageCode: languageCode))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -191,7 +194,7 @@ struct SentView: View {
                     .padding(.horizontal, 32)
 
                 Button(action: onClose) {
-                    Text(UserOrientStrings.goBack(languageCode: nil))
+                    Text(UserOrientStrings.goBack(languageCode: languageCode))
                         .font(.headline)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 10)

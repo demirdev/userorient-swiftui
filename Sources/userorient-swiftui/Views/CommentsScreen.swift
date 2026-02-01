@@ -11,6 +11,8 @@ import AppKit
 struct CommentsScreen: View {
     @StateObject private var viewModel: CommentsViewModel
 
+    private var languageCode: String? { UserOrientClient.shared.configurationLanguageCode }
+
     init(feature: UserOrientFeature) {
         _viewModel = StateObject(wrappedValue: CommentsViewModel(feature: feature))
     }
@@ -22,7 +24,7 @@ struct CommentsScreen: View {
                 commentInput
             }
             .frame(minHeight: 360)
-            .navigationTitle(UserOrientStrings.comments(languageCode: nil))
+            .navigationTitle(UserOrientStrings.comments(languageCode: languageCode))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -51,9 +53,9 @@ struct CommentsScreen: View {
                     Image(systemName: "bubble.left.and.bubble.right")
                         .font(.system(size: 32))
                         .foregroundColor(.secondary)
-                    Text(UserOrientStrings.noCommentsTitle(languageCode: nil))
+                    Text(UserOrientStrings.noCommentsTitle(languageCode: languageCode))
                         .font(.headline)
-                    Text(UserOrientStrings.noCommentsSubtitle(languageCode: nil))
+                    Text(UserOrientStrings.noCommentsSubtitle(languageCode: languageCode))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -62,7 +64,7 @@ struct CommentsScreen: View {
                 List {
                     ForEach(viewModel.comments) { comment in
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(comment.ownerFullName ?? UserOrientStrings.guestUser(languageCode: nil))
+                            Text(comment.ownerFullName ?? UserOrientStrings.guestUser(languageCode: languageCode))
                                 .font(.headline)
                             if let date = comment.createdAt {
                                 Text(UserOrientDateFormatter.relativeString(for: date))
@@ -83,7 +85,7 @@ struct CommentsScreen: View {
     private var commentInput: some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
-                TextField(UserOrientStrings.addCommentPlaceholder(languageCode: nil), text: $viewModel.newCommentText)
+                TextField(UserOrientStrings.addCommentPlaceholder(languageCode: languageCode), text: $viewModel.newCommentText)
                     .textFieldStyle(.roundedBorder)
 
                 Button(action: {
