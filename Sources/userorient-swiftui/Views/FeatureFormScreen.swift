@@ -142,17 +142,21 @@ struct FeatureFormScreen: View {
                         ProgressView()
                             .progressViewStyle(.circular)
                             .tint(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
                     } else {
                         Text(UserOrientStrings.submitForm(languageCode: nil))
-                            .font(.headline)
+                            .font(.system(size: 16, weight: .semibold))
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(viewModel.isValid ? Color.accentColor : Color.gray.opacity(0.5))
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(viewModel.isValid ? Color.accentColor : Color.gray.opacity(0.5))
+                )
                 .foregroundColor(.white)
-                .cornerRadius(12)
-                .padding(.horizontal, 16)
+                .buttonStyle(.plain)
                 .disabled(!viewModel.isValid || viewModel.isSubmitting)
             }
         }

@@ -13,15 +13,13 @@ final class BoardViewModel: ObservableObject {
     @Published var selectedTab: Tab = .roadmap
 
     var displayedFeatures: [UserOrientFeature] {
-        let source: [UserOrientFeature]
-
+        // Show skeletons during loading without filtering by tab
+        // This prevents window size changes when switching tabs while loading
         if isLoading && features.isEmpty {
-            source = (0..<9).map { UserOrientFeature.skeleton(placeholderIndex: $0) }
-        } else {
-            source = features
+            return (0..<5).map { UserOrientFeature.skeleton(placeholderIndex: $0) }
         }
 
-        return source.filter { feature in
+        return features.filter { feature in
             switch selectedTab {
             case .roadmap:
                 return !feature.isCompleted

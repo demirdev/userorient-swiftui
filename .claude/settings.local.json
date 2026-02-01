@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(uvx:*)"
+      "Bash(uvx:*)",
+      "Bash(swift build:*)"
     ]
   }
 }
