@@ -80,6 +80,12 @@ public struct UserOrientBoardView: View {
         }
         #else
         form
+            .frame(
+                minWidth: FeatureFormScreen.defaultSheetWidth,
+                idealWidth: FeatureFormScreen.defaultSheetWidth,
+                minHeight: FeatureFormScreen.defaultSheetHeight,
+                idealHeight: FeatureFormScreen.defaultSheetHeight
+            )
         #endif
     }
 
